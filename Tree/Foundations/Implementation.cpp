@@ -46,11 +46,31 @@ Node* createTreeBFS(){
     }
     return root;
 }
+
+Node* createTreeDFS(){
+    int data;
+    cout<<"Enter Node Value ::";
+    cin>>data;
+    if(data==-1){
+        return NULL;
+    }
+    Node* root=newNode(data);
+    //Left 
+    cout<<"Enter Left Element ("<<root->data<<")::";  
+    root->left=createTreeDFS();
+    //Right
+    cout<<"Enter Right Element ("<<root->data<<")::";
+    root->right=createTreeDFS();
+    return root;
+}
+
+
 int main(){
     cout<<"||       This is MENU Driven Tree Mini Project focused on learning Tree for an SDE Role (ALL FROM SCRATCH)      ||\n";
     cout<<"                                                Happy Learning 😁🚀                                             \n \n";
     cout<<"Menu \n";
     cout<<"1-> CREATION OF TREE \n";
+
     
 
     //USER Input
@@ -58,11 +78,27 @@ int main(){
     cout<<"ENTER YOUR CHOICE :: ";
     cin>>choice;
 
-    //LogicofMenu
+
+    //LogicoOfMenu
     if(choice==1){
         cout<<"Let's Create Binary Tree \n";
-        Node* root=createTreeBFS();
-        cout<<"  Binary Tree is Created 😱😱 ";
+        cout<<"Method to use ::>> \n\n";
+        cout<<" 1->> BFS (Breadth First Search aka Level Order)\n";
+        cout<<" 2->> DFS (Depth First Search)\n";
+        int subChoice;
+        cout<<"Enter Method to Use";
+        cin>>subChoice;
+        
+        if(subChoice==1){
+            Node* root=createTreeBFS();
+            cout<<" (BFS) Binary Tree is Created 😱😱 ";
+        }
+        else if(subChoice==2){
+            Node* root=createTreeDFS();
+            cout<<" (DFS) Binary Tree is Created 😱😱 ";
+        }
+        
+        
     }
     return 0;
   
