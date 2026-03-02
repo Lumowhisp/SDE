@@ -64,17 +64,55 @@ Node* createTreeDFS(){
     return root;
 }
 
+//Printing
+void printTree(Node* root, string indent = "", bool isLeft = true){
+    if(root == NULL) return;
+
+    cout << indent;
+    if(isLeft){
+        cout << "├── ";
+        indent += "│   ";
+    } else {
+        cout << "└── ";
+        indent += "    ";
+    }
+    cout << root->data << endl;
+
+    printTree(root->left, indent, true);
+    printTree(root->right, indent, false);
+}
+
+
+//Traversing
+void preOrder(Node* root){
+    //BaseCase
+    if(root==NULL){
+        return;
+    }
+    cout<<root->data<<" ";
+    preOrder(root->left);
+    preOrder(root->right);
+}
+
 
 int main(){
+    int choice=0;
+
+    //INTRO
+    
     cout<<"||       This is MENU Driven Tree Mini Project focused on learning Tree for an SDE Role (ALL FROM SCRATCH)      ||\n";
     cout<<"                                                Happy Learning 😁🚀                                             \n \n";
-    cout<<"Menu \n";
+    //MENU 
+    cout<<"Menu \n\n";
+    cout<<"-1-> EXITING PROGRAM \n";
     cout<<"1-> CREATION OF TREE \n";
+    cout<<"2-> TRAVERSAL OF TREE \n\n";
+    Node* root=NULL;
 
-    
+    //LOOP START
 
     //USER Input
-    int choice;
+   while(choice!=-1){
     cout<<"ENTER YOUR CHOICE :: ";
     cin>>choice;
 
@@ -84,23 +122,41 @@ int main(){
         cout<<"Let's Create Binary Tree \n";
         cout<<"Method to use ::>> \n\n";
         cout<<" 1->> BFS (Breadth First Search aka Level Order)\n";
-        cout<<" 2->> DFS (Depth First Search)\n";
+        cout<<" 2->> DFS (Depth First Search)\n\n";
         int subChoice;
-        cout<<"Enter Method to Use";
+        cout<<"Enter Method to Use :: ";
         cin>>subChoice;
         
         if(subChoice==1){
-            Node* root=createTreeBFS();
-            cout<<" (BFS) Binary Tree is Created 😱😱 ";
+            root=createTreeBFS();
+            cout<<" (BFS) Binary Tree is Created 😱😱 \n";
         }
         else if(subChoice==2){
-            Node* root=createTreeDFS();
-            cout<<" (DFS) Binary Tree is Created 😱😱 ";
+            root=createTreeDFS();
+            cout<<" (DFS) Binary Tree is Created 😱😱 \n";
         }
         
         
     }
+    else if(choice==2){
+        if(root == NULL){
+            cout << "Tree is empty ❌. Please create tree first.\n";
+        } else {
+            cout << "Preorder Traversal: ";
+            preOrder(root);
+            cout << "\n\nTree Structure:\n";
+            printTree(root, "", false);
+        }
+    }
+    else if(choice==-1){
+        cout<<"Exiting Program 👋\n";
+        break;
+    }
+    else{
+        cout<<"INVALID CHOICE ❌ TRY AGAIN \n";
+    }
+    }
     return 0;
-  
+
 }
 
