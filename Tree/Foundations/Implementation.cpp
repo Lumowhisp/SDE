@@ -93,6 +93,24 @@ void preOrder(Node* root){
     preOrder(root->left);
     preOrder(root->right);
 }
+void inOrder(Node* root){
+    //BaseCase
+    if(root==NULL){
+        return;
+    }
+    inOrder(root->left);
+    cout<<root->data<<" ";
+    inOrder(root->right);
+}
+void postOrder(Node* root){
+    //BaseCase
+    if(root==NULL){
+        return;
+    }
+    postOrder(root->left);
+    postOrder(root->right);
+    cout<<root->data<<" ";
+}
 
 
 int main(){
@@ -144,6 +162,10 @@ int main(){
         } else {
             cout << "Preorder Traversal: ";
             preOrder(root);
+            cout << "Inorder Traversal: ";
+            inOrder(root);
+            cout << "Postorder Traversal: ";
+            postOrder(root);
             cout << "\n\nTree Structure:\n";
             printTree(root, "", false);
         }
