@@ -1,0 +1,36 @@
+# ===== Compiled binaries =====
+a.out
+*.exe
+*.out
+*.app
+
+# ===== Object files =====
+*.o
+*.obj
+
+# ===== Build folders =====
+build/
+bin/
+dist/
+
+# ===== Debug / temp files =====
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# ===== OS specific =====
+.DS_Store
+Thumbs.db
+
+# ===== Editor / IDE =====
+.vscode/
+.idea/
+*.code-workspace
+
+# ===== CMake (if used later) =====
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
