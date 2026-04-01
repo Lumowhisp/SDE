@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sliding Window Mastery — Interactive DSA Patterns</title>
+  <meta name="description" content="Master all 8 Sliding Window patterns with interactive visualizations, step-by-step animations, and C++ code. From fixed-size sums to monotonic deques.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+</head>
+<body>
+
+<!-- ======================== NAVBAR ======================== -->
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <a href="#" class="nav-brand">
+      <span class="icon">🪟</span>
+      <span>SlidingWindow</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#theory">Theory</a></li>
+      <li><a href="#patterns">Patterns</a></li>
+      <li><a href="#stl">STL Ref</a></li>
+      <li><a href="#cheatsheet">Cheatsheet</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle">☰</button>
+  </div>
+</nav>
+
+<!-- ======================== HERO ======================== -->
+<section class="hero" id="hero">
+  <div class="hero-bg-animation">
+    <div class="window-track">
+      <div class="bg-cell">2</div>
+      <div class="bg-cell">7</div>
+      <div class="bg-cell active">1</div>
+      <div class="bg-cell active">5</div>
+      <div class="bg-cell active">3</div>
+      <div class="bg-cell">9</div>
+      <div class="bg-cell">4</div>
+      <div class="bg-cell">8</div>
+      <div class="bg-cell">6</div>
+    </div>
+    <div class="window-track" style="top:30%; animation-delay: -4s; opacity: 0.3;">
+      <div class="bg-cell">a</div>
+      <div class="bg-cell active">b</div>
+      <div class="bg-cell active">c</div>
+      <div class="bg-cell">a</div>
+      <div class="bg-cell">d</div>
+    </div>
+    <div class="window-track" style="top:70%; animation-delay: -8s; opacity: 0.3;">
+      <div class="bg-cell">4</div>
+      <div class="bg-cell">2</div>
+      <div class="bg-cell active">8</div>
+      <div class="bg-cell active">5</div>
+      <div class="bg-cell">1</div>
+      <div class="bg-cell">3</div>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">⚡ Interactive DSA Learning</div>
+    <h1>Master the <span class="gradient-text">Sliding Window</span></h1>
+    <p class="hero-subtitle">
+      Transform brute-force O(n²) into elegant O(n) solutions. 
+      Interactive visualizations, C++ code, and step-by-step animations for every pattern.
+    </p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-value">8</div>
+        <div class="stat-label">Patterns</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">O(n)</div>
+        <div class="stat-label">Time Complexity</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">C++</div>
+        <div class="stat-label">STL Integrated</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">∞</div>
+        <div class="stat-label">Practice</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== THEORY ======================== -->
+<section id="theory">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">📐 Foundations</div>
+      <h2>Why Sliding Window?</h2>
+      <p class="section-desc">The sliding window maintains a persistent state for a contiguous segment, updating it incrementally as boundaries advance — eliminating redundant computation.</p>
+    </div>
+
+    <div class="comparison-grid fade-in">
+      <div class="glass-card comparison-card brute">
+        <div class="card-icon">🐢</div>
+        <h3>Brute Force</h3>
+        <div class="complexity">O(n²) or O(n³)</div>
+        <p>Recalculates every subarray from scratch. For each starting position, iterates through all possible ending positions. High redundancy — overlapping segments are re-processed entirely.</p>
+      </div>
+      <div class="glass-card comparison-card optimal">
+        <div class="card-icon">⚡</div>
+        <h3>Sliding Window</h3>
+        <div class="complexity">O(n)</div>
+        <p>Incremental update of persistent state. Each element is visited at most twice (once by each pointer). The transition from range [i, j] to [i+1, j+1] involves only two operations.</p>
+      </div>
+    </div>
+
+    <!-- Complexity Comparison Table -->
+    <div class="glass-card fade-in" style="margin-top: 32px;">
+      <table class="complexity-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Strategy</th>
+            <th>Time</th>
+            <th>Redundancy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Brute Force</strong></td>
+            <td>Recalculate every subarray</td>
+            <td class="mono bad">O(n²)</td>
+            <td>🔴 High</td>
+          </tr>
+          <tr>
+            <td><strong>Sliding Window</strong></td>
+            <td>Incremental state update</td>
+            <td class="mono good">O(n)</td>
+            <td>🟢 Low</td>
+          </tr>
+          <tr>
+            <td><strong>Two-Pointer</strong></td>
+            <td>Independent movement</td>
+            <td class="mono good">O(n)</td>
+            <td>🟡 Variable</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== PATTERNS ======================== -->
+<section id="patterns">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">🧩 Core Patterns</div>
+      <h2>8 Essential Patterns</h2>
+      <p class="section-desc">From fixed-size aggregates to monotonic deques — each pattern with interactive visualizations and production-ready C++ code.</p>
+    </div>
+
+    <!-- ===== PATTERN 1: Fixed Sum ===== -->
+    <div class="pattern-section fade-in" id="pattern1">
+      <div class="pattern-header">
+        <div class="pattern-number p1">01</div>
+        <div class="pattern-meta">
+          <h2>Contiguous Aggregates (Fixed Sum)</h2>
+          <div class="pattern-tags">
+            <span class="tag fixed">Fixed Window</span>
+            <span class="tag fixed">Easy</span>
+          </div>
+        </div>
+      </div>
+      <div class="pattern-body">
+        <div class="pattern-explain">
+          <p>The most fundamental fixed-size pattern — calculate a numeric property (sum, average, max) across all subarrays of length <strong>k</strong>.</p>
+          <p>The core idea: "prime" the window by calculating the initial aggregate for the first k elements, then slide by <strong>adding the incoming element</strong> and <strong>subtracting the outgoing element</strong>.</p>
+          <div class="key-insight">
+            <div class="label">💡 Key Formula</div>
+            <p><code>sum[i] = sum[i-1] - arr[i-k] + arr[i]</code> — each transition is O(1), making the total O(n).</p>
+          </div>
+        </div>
+        <div>
+          <div class="viz-container" id="viz-p1">
+            <div class="viz-toolbar">
+              <span class="viz-title">▶ Maximum Sum Subarray of size K</span>
+              <div class="viz-controls">
+                <button class="viz-btn" onclick="vizP1.step()">Step →</button>
+                <button class="viz-btn" onclick="vizP1.play()" id="p1-play">▶ Play</button>
+                <button class="viz-btn reset-btn" onclick="vizP1.reset()">↺ Reset</button>
+              </div>
+            </div>
+            <div class="viz-body">
+              <div class="input-group">
+                <label>K =</label>
+                <input type="number" id="p1-k" value="3" min="1" max="6" style="width:60px">
+              </div>
+              <div class="array-viz" id="p1-array"></div>
+              <div class="state-display" id="p1-state"></div>
+              <div class="viz-log" id="p1-log"></div>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-lang"><span class="dot"></span>C++ — Max Sum Subarray</div>
+              <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+            <pre><code class="language-cpp">int maxSumSubarray(vector&lt;int&gt;&amp; arr, int k) {
+    int n = arr.size();
+    // Prime the window
+    int windowSum = accumulate(arr.begin(), arr.begin() + k, 0);
+    int maxSum = windowSum;
+
+    // Slide the window
+    for (int i = k; i &lt; n; i++) {
+        windowSum += arr[i] - arr[i - k];  // add incoming, remove outgoing
+        maxSum = max(maxSum, windowSum);
+    }
+    return maxSum;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PATTERN 2: Anagram Detection ===== -->
+    <div class="pattern-section fade-in" id="pattern2">
+      <div class="pattern-header">
+        <div class="pattern-number p2">02</div>
+        <div class="pattern-meta">
+          <h2>Permutation & Anagram Detection</h2>
+          <div class="pattern-tags">
+            <span class="tag fixed">Fixed Window</span>
+            <span class="tag advanced">Medium</span>
+          </div>
+        </div>
+      </div>
+      <div class="pattern-body">
+        <div class="pattern-explain">
+          <p>Detect if any window of size <strong>|P|</strong> in string <strong>S</strong> is a permutation (anagram) of pattern <strong>P</strong>. The state is a <strong>frequency distribution</strong> rather than a scalar.</p>
+          <p>Use two frequency arrays of size 26. As the window slides, increment the entering character's count and decrement the leaving character's count. A "matches" counter tracks how many of 26 characters have equal frequencies.</p>
+          <div class="key-insight">
+            <div class="label">💡 Key Insight</div>
+            <p>When <code>matches == 26</code>, all character frequencies are equal — the window is an anagram! This gives O(1) comparison after O(|P|) setup.</p>
+          </div>
+        </div>
+        <div>
+          <div class="viz-container" id="viz-p2">
+            <div class="viz-toolbar">
+              <span class="viz-title">▶ Find Anagram in String</span>
+              <div class="viz-controls">
+                <button class="viz-btn" onclick="vizP2.step()">Step →</button>
+                <button class="viz-btn" onclick="vizP2.play()" id="p2-play">▶ Play</button>
+                <button class="viz-btn reset-btn" onclick="vizP2.reset()">↺ Reset</button>
+              </div>
+            </div>
+            <div class="viz-body">
+              <div class="input-group">
+                <label>String:</label>
+                <input type="text" id="p2-str" value="cbaebabacd" style="width:160px">
+                <label>Pattern:</label>
+                <input type="text" id="p2-pat" value="abc" style="width:80px">
+              </div>
+              <div class="array-viz" id="p2-array"></div>
+              <div class="freq-viz" id="p2-freq"></div>
+              <div class="state-display" id="p2-state"></div>
+              <div class="viz-log" id="p2-log"></div>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-lang"><span class="dot" style="background:var(--accent-purple)"></span>C++ — Permutation in String</div>
+              <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+            <pre><code class="language-cpp">vector&lt;int&gt; findAnagrams(string s, string p) {
+    vector&lt;int&gt; result;
+    if (s.size() &lt; p.size()) return result;
+
+    int pCount[26] = {}, sCount[26] = {};
+    for (char c : p) pCount[c - 'a']++;
+
+    int matches = 0;
+    for (int i = 0; i &lt; 26; i++)
+        if (pCount[i] == 0) matches++;  // both zero = match
+
+    for (int i = 0; i &lt; s.size(); i++) {
+        // Add right char
+        int idx = s[i] - 'a';
+        sCount[idx]++;
+        if (sCount[idx] == pCount[idx]) matches++;
+        else if (sCount[idx] == pCount[idx] + 1) matches--;
+
+        // Remove left char (when window exceeds |P|)
+        if (i &gt;= p.size()) {
+            idx = s[i - p.size()] - 'a';
+            sCount[idx]--;
+            if (sCount[idx] == pCount[idx]) matches++;
+            else if (sCount[idx] == pCount[idx] - 1) matches--;
+        }
+
+        if (matches == 26)
+            result.push_back(i - p.size() + 1);
+    }
+    return result;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PATTERN 3: Longest with K Distinct ===== -->
+    <div class="pattern-section fade-in" id="pattern3">
+      <div class="pattern-header">
+        <div class="pattern-number p3">03</div>
+        <div class="pattern-meta">
+          <h2>Longest Subarray with K Distinct</h2>
+          <div class="pattern-tags">
+            <span class="tag variable">Variable Window</span>
+            <span class="tag advanced">Medium</span>
+          </div>
+        </div>
+      </div>
+      <div class="pattern-body">
+        <div class="pattern-explain">
+          <p>Find the <strong>longest</strong> substring/subarray with at most <strong>K</strong> distinct elements. The window expands freely and contracts only when the constraint is violated.</p>
+          <p>The state is tracked with <code>std::unordered_map</code> for character frequency counts. When <code>map.size() &gt; K</code>, contract from the left. <strong>Crucially</strong>: erase keys with zero frequency to correctly maintain <code>size()</code>.</p>
+          <div class="key-insight">
+            <div class="label">💡 Expansion-Contraction Rhythm</div>
+            <p><strong>Expand</strong> → add element, <strong>Validate</strong> → check constraint, <strong>Contract</strong> → shrink until valid, <strong>Report</strong> → update max length.</p>
+          </div>
+        </div>
+        <div>
+          <div class="viz-container" id="viz-p3">
+            <div class="viz-toolbar">
+              <span class="viz-title">▶ Longest with K Distinct Characters</span>
+              <div class="viz-controls">
+                <button class="viz-btn" onclick="vizP3.step()">Step →</button>
+                <button class="viz-btn" onclick="vizP3.play()" id="p3-play">▶ Play</button>
+                <button class="viz-btn reset-btn" onclick="vizP3.reset()">↺ Reset</button>
+              </div>
+            </div>
+            <div class="viz-body">
+              <div class="input-group">
+                <label>String:</label>
+                <input type="text" id="p3-str" value="eceba" style="width:120px">
+                <label>K =</label>
+                <input type="number" id="p3-k" value="2" min="1" max="5" style="width:60px">
+              </div>
+              <div class="array-viz" id="p3-array"></div>
+              <div class="freq-viz" id="p3-freq"></div>
+              <div class="state-display" id="p3-state"></div>
+              <div class="viz-log" id="p3-log"></div>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-lang"><span class="dot" style="background:var(--accent-green)"></span>C++ — Longest Substring with K Distinct</div>
+              <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+            <pre><code class="language-cpp">int longestWithKDistinct(string s, int k) {
+    unordered_map&lt;char, int&gt; freq;
+    int left = 0, maxLen = 0;
+
+    for (int right = 0; right &lt; s.size(); right++) {
+        freq[s[right]]++;  // Expand
+
+        // Contract while constraint violated
+        while (freq.size() &gt; k) {
+            freq[s[left]]--;
+            if (freq[s[left]] == 0)
+                freq.erase(s[left]);  // crucial!
+            left++;
+        }
+
+        maxLen = max(maxLen, right - left + 1);  // Report
+    }
+    return maxLen;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PATTERN 4: Shortest Subarray with Target Sum ===== -->
+    <div class="pattern-section fade-in" id="pattern4">
+      <div class="pattern-header">
+        <div class="pattern-number p4">04</div>
+        <div class="pattern-meta">
+          <h2>Shortest Subarray with Target Sum</h2>
+          <div class="pattern-tags">
+            <span class="tag variable">Variable Window</span>
+            <span class="tag advanced">Medium</span>
+          </div>
+        </div>
+      </div>
+      <div class="pattern-body">
+        <div class="pattern-explain">
+          <p>Find the <strong>shortest</strong> subarray whose sum is ≥ target S. The logic is inverted from the "longest" pattern — once the sum reaches the target, contract <strong>as much as possible</strong>.</p>
+          <p>The critical difference: for <strong>longest</strong> problems, update result after expansion; for <strong>shortest</strong> problems, update result <strong>during the contraction phase</strong> as long as the window remains valid.</p>
+          <div class="key-insight">
+            <div class="label">💡 Longest vs Shortest</div>
+            <p>Longest → update <em>outside</em> the while loop. Shortest → update <em>inside</em> the while loop. This is the #1 mistake in interviews!</p>
+          </div>
+        </div>
+        <div>
+          <div class="viz-container" id="viz-p4">
+            <div class="viz-toolbar">
+              <span class="viz-title">▶ Minimum Size Subarray Sum ≥ S</span>
+              <div class="viz-controls">
+                <button class="viz-btn" onclick="vizP4.step()">Step →</button>
+                <button class="viz-btn" onclick="vizP4.play()" id="p4-play">▶ Play</button>
+                <button class="viz-btn reset-btn" onclick="vizP4.reset()">↺ Reset</button>
+              </div>
+            </div>
+            <div class="viz-body">
+              <div class="input-group">
+                <label>Target S =</label>
+                <input type="number" id="p4-target" value="7" min="1" max="30" style="width:60px">
+              </div>
+              <div class="array-viz" id="p4-array"></div>
+              <div class="state-display" id="p4-state"></div>
+              <div class="viz-log" id="p4-log"></div>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-lang"><span class="dot" style="background:var(--accent-orange)"></span>C++ — Minimum Size Subarray Sum</div>
+              <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+            <pre><code class="language-cpp">int minSubArrayLen(int target, vector&lt;int&gt;&amp; nums) {
+    int left = 0, sum = 0;
+    int minLen = INT_MAX;
+
+    for (int right = 0; right &lt; nums.size(); right++) {
+        sum += nums[right];  // Expand
+
+        // Contract while valid — update INSIDE the loop!
+        while (sum &gt;= target) {
+            minLen = min(minLen, right - left + 1);
+            sum -= nums[left];
+            left++;
+        }
+    }
+    return minLen == INT_MAX ? 0 : minLen;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PATTERN 5: Monotonic Deque ===== -->
+    <div class="pattern-section fade-in" id="pattern5">
+      <div class="pattern-header">
+        <div class="pattern-number p5">05</div>
+        <div class="pattern-meta">
+          <h2>Monotonic Deque — Sliding Window Maximum</h2>
+          <div class="pattern-tags">
+            <span class="tag fixed">Fixed Window</span>
+            <span class="tag hard">Hard</span>
+          </div>
+        </div>
+      </div>
+      <div class="pattern-body">
+        <div class="pattern-explain">
+          <p>Find the maximum element in every window of size K. A naive heap approach gives O(n log n), but a <strong>monotonic deque</strong> achieves O(n).</p>
+          <p>The deque stores <strong>indices</strong> in decreasing order of values. Three key operations per step:</p>
+          <p><strong>1.</strong> Remove front if outside window (<code>deque.front() ≤ i - k</code>)<br>
+          <strong>2.</strong> Pop back while <code>arr[back] ≤ arr[i]</code> (they can never be the max)<br>
+          <strong>3.</strong> Push current index — <code>deque.front()</code> is always the max</p>
+          <div class="key-insight">
+            <div class="label">💡 Why It Works</div>
+            <p>An older, smaller element can never be the maximum of any future window — a newer, larger element dominates it. So we discard it.</p>
+          </div>
+        </div>
+        <div>
+          <div class="viz-container" id="viz-p5">
+            <div class="viz-toolbar">
+              <span class="viz-title">▶ Sliding Window Maximum (LC 239)</span>
+              <div class="viz-controls">
+                <button class="viz-btn" onclick="vizP5.step()">Step →</button>
+                <button class="viz-btn" onclick="vizP5.play()" id="p5-play">▶ Play</button>
+                <button class="viz-btn reset-btn" onclick="vizP5.reset()">↺ Reset</button>
+              </div>
+            </div>
+            <div class="viz-body">
+              <div class="input-group">
+                <label>K =</label>
+                <input type="number" id="p5-k" value="3" min="2" max="5" style="width:60px">
+              </div>
+              <div class="array-viz" id="p5-array"></div>
+              <div class="deque-viz" id="p5-deque">
+                <span class="deque-label">Deque:</span>
+              </div>
+              <div class="state-display" id="p5-state"></div>
+              <div class="viz-log" id="p5-log"></div>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-lang"><span class="dot" style="background:var(--accent-magenta)"></span>C++ — Sliding Window Maximum</div>
+              <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+            <pre><code class="language-cpp">vector&lt;int&gt; maxSlidingWindow(vector&lt;int&gt;&amp; nums, int k) {
+    deque&lt;int&gt; dq;  // stores indices, decreasing order of values
+    vector&lt;int&gt; result;
+
+    for (int i = 0; i &lt; nums.size(); i++) {
+        // 1. Remove elements outside the window
+        if (!dq.empty() &amp;&amp; dq.front() &lt;= i - k)
+            dq.pop_front();
+
+        // 2. Maintain monotonicity — pop smaller elements
+        while (!dq.empty() &amp;&amp; nums[dq.back()] &lt;= nums[i])
+            dq.pop_back();
+
+        dq.push_back(i);
+
+        // 3. Record result once window is full
+        if (i &gt;= k - 1)
+            result.push_back(nums[dq.front()]);
+    }
+    return result;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PATTERN 6: Two Heaps Median ===== -->
+    <div class="pattern-section fade-in" id="pattern6">
+      <div class="pattern-header">
+        <div class="pattern-number p6">06</div>
+        <div class="pattern-meta">
+          <h2>Sliding Window Median (Two Heaps)</h2>
+          <div class="pattern-tags">
+            <span class="tag fixed">Fixed Window</span>
+            <span class="tag hard">Hard</span>
+          </div>
+        </div>
+      </div>
+      <div class="pattern-body">
+        <div class="pattern-explain">
+          <p>Maintain the <strong>median</strong> of a moving window using a <strong>Two-Heap</strong> strategy:</p>
+          <p>• <strong>Max-Heap</strong> — contains the smaller half of window elements<br>
+          • <strong>Min-Heap</strong> — contains the larger half of window elements</p>
+          <p>The median is the top of the larger heap (odd size) or average of both tops. A <strong>lazy deletion</strong> mechanism handles removals: track pending removals in a hash map and only delete when they reach a heap top.</p>
+          <div class="key-insight">
+            <div class="label">💡 Lazy Deletion</div>
+            <p>Instead of searching O(n) to remove an element from a heap, mark it as "pending" and remove only when it reaches the top during rebalancing.</p>
+          </div>
+        </div>
+        <div>
+          <div class="viz-container" id="viz-p6">
+            <div class="viz-toolbar">
+              <span class="viz-title">▶ Sliding Window Median (LC 480)</span>
+              <div class="viz-controls">
+                <button class="viz-btn" onclick="vizP6.step()">Step →</button>
+                <button class="viz-btn" onclick="vizP6.play()" id="p6-play">▶ Play</button>
+                <button class="viz-btn reset-btn" onclick="vizP6.reset()">↺ Reset</button>
+              </div>
+            </div>
+            <div class="viz-body">
+              <div class="array-viz" id="p6-array"></div>
+              <div style="display:flex; gap:16px; width:100%; justify-content:center; flex-wrap:wrap;">
+                <div class="deque-viz" id="p6-maxheap" style="border-color: rgba(249,115,22,0.3); background: rgba(249,115,22,0.06); flex:1; min-width:140px;">
+                  <span class="deque-label" style="color:var(--accent-orange)">Max-Heap (lo):</span>
+                </div>
+                <div class="deque-viz" id="p6-minheap" style="border-color: rgba(34,211,238,0.3); background: rgba(34,211,238,0.06); flex:1; min-width:140px;">
+                  <span class="deque-label" style="color:var(--accent-cyan)">Min-Heap (hi):</span>
+                </div>
+              </div>
+              <div class="state-display" id="p6-state"></div>
+              <div class="viz-log" id="p6-log"></div>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-lang"><span class="dot" style="background:var(--accent-yellow)"></span>C++ — Sliding Window Median</div>
+              <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+            <pre><code class="language-cpp">vector&lt;double&gt; medianSlidingWindow(vector&lt;int&gt;&amp; nums, int k) {
+    multiset&lt;int&gt; lo, hi;  // lo = max-heap equiv, hi = min-heap equiv
+    vector&lt;double&gt; result;
+
+    for (int i = 0; i &lt; nums.size(); i++) {
+        // Insert into appropriate half
+        if (lo.empty() || nums[i] &lt;= *lo.rbegin())
+            lo.insert(nums[i]);
+        else
+            hi.insert(nums[i]);
+
+        // Rebalance: lo.size() == hi.size() or lo.size() == hi.size() + 1
+        while (lo.size() &gt; hi.size() + 1) {
+            hi.insert(*lo.rbegin());
+            lo.erase(prev(lo.end()));
+        }
+        while (hi.size() &gt; lo.size()) {
+            lo.insert(*hi.begin());
+            hi.erase(hi.begin());
+        }
+
+        // Window is full — record median
+        if (i &gt;= k - 1) {
+            if (k % 2 == 1)
+                result.push_back(*lo.rbegin());
+            else
+                result.push_back(((double)*lo.rbegin() + *hi.begin()) / 2.0);
+
+            // Remove outgoing element
+            int out = nums[i - k + 1];
+            if (lo.count(out))
+                lo.erase(lo.find(out));
+            else
+                hi.erase(hi.find(out));
+        }
+    }
+    return result;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PATTERN 7: Exactly K Transform ===== -->
+    <div class="pattern-section fade-in" id="pattern7">
+      <div class="pattern-header">
+        <div class="pattern-number p7">07</div>
+        <div class="pattern-meta">
+          <h2>Exactly K Transform (Counting)</h2>
+          <div class="pattern-tags">
+            <span class="tag counting">Counting</span>
+            <span class="tag advanced">Medium</span>
+          </div>
+        </div>
+      </div>
+      <div class="pattern-body">
+        <div class="pattern-explain">
+          <p>Count subarrays with <strong>exactly K</strong> of something (distinct chars, odd numbers, etc.). Direct sliding window is hard because expanding can make the window valid, then invalid, then valid again.</p>
+          <p>The transformation: <code>exactly(K) = atMost(K) − atMost(K−1)</code></p>
+          <p>Implement a helper <code>countAtMost(K)</code> using a standard variable-window where you contract when count &gt; K. The number of valid subarrays ending at index <code>right</code> is simply <code>right − left + 1</code>.</p>
+          <div class="key-insight">
+            <div class="label">💡 Why right − left + 1?</div>
+            <p>Subarrays ending at <code>right</code> that satisfy "at most K" start from any index in <code>[left, right]</code>. That's <code>right − left + 1</code> subarrays.</p>
+          </div>
+        </div>
+        <div>
+          <div class="viz-container" id="viz-p7">
+            <div class="viz-toolbar">
+              <span class="viz-title">▶ Subarrays with Exactly K Odd Numbers</span>
+              <div class="viz-controls">
+                <button class="viz-btn" onclick="vizP7.step()">Step →</button>
+                <button class="viz-btn" onclick="vizP7.play()" id="p7-play">▶ Play</button>
+                <button class="viz-btn reset-btn" onclick="vizP7.reset()">↺ Reset</button>
+              </div>
+            </div>
+            <div class="viz-body">
+              <div class="input-group">
+                <label>K =</label>
+                <input type="number" id="p7-k" value="2" min="1" max="4" style="width:60px">
+              </div>
+              <div class="array-viz" id="p7-array"></div>
+              <div class="state-display" id="p7-state"></div>
+              <div class="viz-log" id="p7-log"></div>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-lang"><span class="dot" style="background:var(--accent-cyan)"></span>C++ — Count Subarrays (Exactly K)</div>
+              <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+            <pre><code class="language-cpp">// Helper: count subarrays with at most K odd numbers
+int atMost(vector&lt;int&gt;&amp; nums, int k) {
+    int left = 0, count = 0, result = 0;
+    for (int right = 0; right &lt; nums.size(); right++) {
+        if (nums[right] % 2 == 1) count++;  // odd number found
+
+        while (count &gt; k) {
+            if (nums[left] % 2 == 1) count--;
+            left++;
+        }
+
+        result += right - left + 1;  // all subarrays ending at right
+    }
+    return result;
+}
+
+// exactly(K) = atMost(K) - atMost(K-1)
+int subarraysWithExactlyKOdd(vector&lt;int&gt;&amp; nums, int k) {
+    return atMost(nums, k) - atMost(nums, k - 1);
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PATTERN 8: Prefix Sum + Monotonic Deque ===== -->
+    <div class="pattern-section fade-in" id="pattern8">
+      <div class="pattern-header">
+        <div class="pattern-number p8">08</div>
+        <div class="pattern-meta">
+          <h2>Prefix Sums + Monotonic Deque</h2>
+          <div class="pattern-tags">
+            <span class="tag hard">Hard</span>
+            <span class="tag counting">Negative Numbers</span>
+          </div>
+        </div>
+      </div>
+      <div class="pattern-body">
+        <div class="pattern-explain">
+          <p>When arrays contain <strong>negative numbers</strong>, the sum is no longer monotonic — adding an element can decrease the total. Standard sliding window fails.</p>
+          <p>The solution for "Shortest Subarray with Sum ≥ K" (LC 862) combines <strong>prefix sums</strong> with a <strong>monotonic deque</strong>:</p>
+          <p>Let P[i] be the prefix sum. We seek minimum <code>j − i</code> such that <code>P[j] − P[i] ≥ K</code>.</p>
+          <p>• Pop from <strong>front</strong> when <code>P[j] − P[front] ≥ K</code> (found valid, future j only gives longer)<br>
+          • Pop from <strong>back</strong> when <code>P[j] ≤ P[back]</code> (j is a better starting point)</p>
+          <div class="key-insight">
+            <div class="label">💡 Why Pop Back?</div>
+            <p>If P[j] ≤ P[back], then j is further right AND has a smaller or equal prefix sum — it's strictly a better candidate for future pairs.</p>
+          </div>
+        </div>
+        <div>
+          <div class="viz-container" id="viz-p8">
+            <div class="viz-toolbar">
+              <span class="viz-title">▶ Shortest Subarray Sum ≥ K (LC 862)</span>
+              <div class="viz-controls">
+                <button class="viz-btn" onclick="vizP8.step()">Step →</button>
+                <button class="viz-btn" onclick="vizP8.play()" id="p8-play">▶ Play</button>
+                <button class="viz-btn reset-btn" onclick="vizP8.reset()">↺ Reset</button>
+              </div>
+            </div>
+            <div class="viz-body">
+              <div class="input-group">
+                <label>Target K =</label>
+                <input type="number" id="p8-target" value="5" min="1" max="20" style="width:60px">
+              </div>
+              <div style="text-align:center; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em;">Original Array</div>
+              <div class="array-viz" id="p8-array"></div>
+              <div style="text-align:center; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em;">Prefix Sums</div>
+              <div class="array-viz" id="p8-prefix"></div>
+              <div class="deque-viz" id="p8-deque">
+                <span class="deque-label">Deque (indices):</span>
+              </div>
+              <div class="state-display" id="p8-state"></div>
+              <div class="viz-log" id="p8-log"></div>
+            </div>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-lang"><span class="dot" style="background:var(--accent-red)"></span>C++ — Shortest Subarray Sum ≥ K</div>
+              <button class="code-copy" onclick="copyCode(this)">📋 Copy</button>
+            </div>
+            <pre><code class="language-cpp">int shortestSubarray(vector&lt;int&gt;&amp; nums, int k) {
+    int n = nums.size();
+    vector&lt;long long&gt; prefix(n + 1, 0);
+    for (int i = 0; i &lt; n; i++)
+        prefix[i + 1] = prefix[i] + nums[i];
+
+    deque&lt;int&gt; dq;  // indices with increasing prefix sums
+    int minLen = INT_MAX;
+
+    for (int j = 0; j &lt;= n; j++) {
+        // Pop front: found valid subarray
+        while (!dq.empty() &amp;&amp; prefix[j] - prefix[dq.front()] &gt;= k) {
+            minLen = min(minLen, j - dq.front());
+            dq.pop_front();
+        }
+
+        // Pop back: j is a better starting point
+        while (!dq.empty() &amp;&amp; prefix[j] &lt;= prefix[dq.back()])
+            dq.pop_back();
+
+        dq.push_back(j);
+    }
+    return minLen == INT_MAX ? -1 : minLen;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ======================== STL REFERENCE ======================== -->
+<section id="stl">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">📚 C++ STL</div>
+      <h2>STL Quick Reference</h2>
+      <p class="section-desc">Essential C++ Standard Template Library containers and algorithms for sliding window problems.</p>
+    </div>
+
+    <div class="stl-grid fade-in">
+      <div class="glass-card stl-card">
+        <div class="stl-card-header">
+          <h3>std::vector</h3>
+          <span class="complexity-badge">O(1) access</span>
+        </div>
+        <div class="stl-card-body">Fixed-size array processing, prefix sum storage. Random access in constant time.</div>
+        <div class="stl-card-use">📌 Use for: Fixed-size windows, prefix sums, result storage</div>
+      </div>
+      <div class="glass-card stl-card">
+        <div class="stl-card-header">
+          <h3>std::deque</h3>
+          <span class="complexity-badge">O(1) front/back</span>
+        </div>
+        <div class="stl-card-body">Double-ended queue with O(1) push/pop at both ends. The backbone of monotonic queue patterns.</div>
+        <div class="stl-card-use">📌 Use for: Sliding window max/min, monotonic queues</div>
+      </div>
+      <div class="glass-card stl-card">
+        <div class="stl-card-header">
+          <h3>std::unordered_map</h3>
+          <span class="complexity-badge">O(1) avg</span>
+        </div>
+        <div class="stl-card-body">Hash map for O(1) average insert, lookup, delete. Tracks character/element frequencies.</div>
+        <div class="stl-card-use">📌 Use for: Variable windows, frequency tracking, distinct elements</div>
+      </div>
+      <div class="glass-card stl-card">
+        <div class="stl-card-header">
+          <h3>std::unordered_set</h3>
+          <span class="complexity-badge">O(1) avg</span>
+        </div>
+        <div class="stl-card-body">Hash set for constant-time membership testing. Perfect for uniqueness constraints.</div>
+        <div class="stl-card-use">📌 Use for: Longest substring without repeating characters</div>
+      </div>
+      <div class="glass-card stl-card">
+        <div class="stl-card-header">
+          <h3>std::multiset</h3>
+          <span class="complexity-badge log">O(log n)</span>
+        </div>
+        <div class="stl-card-body">Balanced BST allowing duplicates with ordered iteration. Supports rbegin() for max element.</div>
+        <div class="stl-card-use">📌 Use for: Sliding window median, dynamic sorted windows</div>
+      </div>
+      <div class="glass-card stl-card">
+        <div class="stl-card-header">
+          <h3>std::priority_queue</h3>
+          <span class="complexity-badge log">O(log n)</span>
+        </div>
+        <div class="stl-card-body">Binary heap with O(log n) push/pop. Does not support arbitrary deletion — combine with lazy deletion.</div>
+        <div class="stl-card-use">📌 Use for: Top K in window, heap-based median</div>
+      </div>
+    </div>
+
+    <!-- STL Functions -->
+    <div class="glass-card fade-in" style="margin-top: 32px;">
+      <h3 style="margin-bottom: 16px;">⚡ Key STL Functions</h3>
+      <table class="complexity-table">
+        <thead>
+          <tr>
+            <th>Function</th>
+            <th>Header</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono" style="color:var(--accent-cyan)">std::accumulate</td>
+            <td>&lt;numeric&gt;</td>
+            <td>Initial window sum: <code>accumulate(v.begin(), v.begin()+k, 0)</code></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:var(--accent-cyan)">std::max_element</td>
+            <td>&lt;algorithm&gt;</td>
+            <td>Find max in range (O(n) — avoid inside loops)</td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:var(--accent-cyan)">std::is_permutation</td>
+            <td>&lt;algorithm&gt;</td>
+            <td>Check if range is a permutation of another (conceptual, O(n²))</td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:var(--accent-cyan)">std::next / std::prev</td>
+            <td>&lt;iterator&gt;</td>
+            <td>Move iterators without explicit loops</td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:var(--accent-cyan)">std::distance</td>
+            <td>&lt;iterator&gt;</td>
+            <td>Current window size with non-random-access iterators</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== CHEATSHEET ======================== -->
+<section id="cheatsheet">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-tag">🎯 Interview Guide</div>
+      <h2>Cheatsheet & Heuristics</h2>
+      <p class="section-desc">A structured approach for tackling sliding window problems in high-stakes assessments.</p>
+    </div>
+
+    <div class="cheatsheet-grid fade-in">
+      <div class="glass-card flowchart">
+        <h3 style="margin-bottom: 20px;">📋 Implementation Workflow</h3>
+        <div class="flow-step">
+          <div class="flow-icon">🔍</div>
+          <div class="flow-content">
+            <h4>1. Pattern Identification</h4>
+            <p>Fixed or variable window? What state needs tracking (sum, frequency, order)?</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">🐢</div>
+          <div class="flow-content">
+            <h4>2. Brute Force Baseline</h4>
+            <p>Articulate the O(n²) solution first to establish the necessity of optimization.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">📦</div>
+          <div class="flow-content">
+            <h4>3. State Management</h4>
+            <p>Choose STL container: <code>int</code> for sums, <code>unordered_map</code> for frequencies, <code>deque</code> for monotonic order.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-icon">🧪</div>
+          <div class="flow-content">
+            <h4>4. Dry Run Visualization</h4>
+            <p>Manually trace window movement with a sample, tracking state changes at boundaries.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <h3 style="margin-bottom: 20px;">⚠️ Edge Cases & Guard Clauses</h3>
+        <ul class="edge-case-list">
+          <li>
+            <span class="icon">🛡️</span>
+            <span><strong>Length Validation:</strong> Check <code>n ≥ k</code> — if window size &gt; input, return empty/error</span>
+          </li>
+          <li>
+            <span class="icon">📍</span>
+            <span><strong>Pointer Init:</strong> Both left and right start at index 0. Handle the first window correctly</span>
+          </li>
+          <li>
+            <span class="icon">📏</span>
+            <span><strong>Length Formula:</strong> Always use <code>right - left + 1</code> for window size</span>
+          </li>
+          <li>
+            <span class="icon">🗑️</span>
+            <span><strong>Map Cleanup:</strong> Erase keys with 0 frequency from <code>unordered_map</code> to keep <code>size()</code> correct</span>
+          </li>
+          <li>
+            <span class="icon">🔢</span>
+            <span><strong>Off-by-One:</strong> Use <code>i - k</code> to find the outgoing element in fixed windows</span>
+          </li>
+          <li>
+            <span class="icon">📊</span>
+            <span><strong>Longest vs Shortest:</strong> Update result outside while loop (longest) vs inside (shortest)</span>
+          </li>
+          <li>
+            <span class="icon">➖</span>
+            <span><strong>Negative Numbers:</strong> If negatives are present, standard shrinking doesn't work — use prefix sums</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== FOOTER ======================== -->
+<footer>
+  <div class="container">
+    <p>Built with <span class="heart">♥</span> for mastering DSA — Sliding Window Patterns & C++ STL</p>
+  </div>
+</footer>
+
+<!-- ======================== SCRIPTS ======================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

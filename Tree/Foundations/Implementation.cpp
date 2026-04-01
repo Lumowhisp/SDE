@@ -162,9 +162,9 @@ int main(){
         } else {
             cout << "Preorder Traversal: ";
             preOrder(root);
-            cout << "Inorder Traversal: ";
+            cout << "  ||  Inorder Traversal: ";
             inOrder(root);
-            cout << "Postorder Traversal: ";
+            cout << "  ||  Postorder Traversal: ";
             postOrder(root);
             cout << "\n\nTree Structure:\n";
             printTree(root, "", false);
